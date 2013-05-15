@@ -1,3 +1,3 @@
 #!/bin/bash
 
-gcc -g -o krapivsky -I. bstreap.c krapivsky.c
+gcc -O3 -o krapivsky -I. bstreap.c krapivsky.c

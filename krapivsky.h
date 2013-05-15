@@ -5,6 +5,6 @@
 
 int main(int, char**);
 
-void krapivsky(bstreap*,bstreap*,double,double,double,int,int);
+void krapivsky(double,double,double,int,int,char*);
 
 	       

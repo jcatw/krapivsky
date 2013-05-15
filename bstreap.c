@@ -12,7 +12,15 @@ bstreap* bstreap_new() {
   return new_bstreap_p;
 }
 
-treapnode* talloc(int value, double offset) {
+knode* kalloc(int in_degree, int out_degree) {
+  knode *knode_p = (knode*) malloc(sizeof(knode));
+  knode_p->in_degree = in_degree;
+  knode_p->out_degree = out_degree;
+
+  return knode_p;
+}
+
+treapnode* talloc(knode* knode_p, int value, double offset) {
   treapnode *new_treapnode_p = (treapnode*) malloc(sizeof(treapnode));
 
   new_treapnode_p->value = value;
@@ -22,8 +30,52 @@ treapnode* talloc(int value, double offset) {
   new_treapnode_p->total = offset + (double) value;
   new_treapnode_p->left = NULL;
   new_treapnode_p->right = NULL;
+  new_treapnode_p->knode_list_p = (knode_list*) malloc(sizeof(knode_list));
+  new_treapnode_p->knode_list_p->knode_p = knode_p;
+  new_treapnode_p->knode_list_p->next = NULL;
 
   return new_treapnode_p;
+}
+
+knode* sample_knode(treapnode *treapnode_p) {
+  int i;
+  knode_list *knode_list_p;
+  int which = rand() % treapnode_p->count;
+
+  knode_list_p = treapnode_p->knode_list_p;
+  for(i=0;i<which;i++)
+    knode_list_p = knode_list_p->next;
+
+  return knode_list_p->knode_p;
+}
+
+knode* remove_random_knode(treapnode *treapnode_p) {
+  int i;
+  knode_list *knode_list_p, *prev, *next;
+  knode *knode_p;
+  int which = rand() % treapnode_p->count;
+
+  (treapnode_p->count)--;
+
+  if(which == 0) { 
+    knode_list_p = treapnode_p->knode_list_p;
+    treapnode_p->knode_list_p = knode_list_p->next;
+    knode_p = knode_list_p->knode_p;
+    free(knode_list_p);
+  }
+  else {
+    prev = treapnode_p->knode_list_p;
+    next = prev->next;
+    for(i=1;i<which;i++) {
+      prev = next;
+      next = prev->next;
+    }
+    knode_list_p = next->next;
+    knode_p = next->knode_p;
+    prev->next = knode_list_p;
+    free(next);
+  }
+  return knode_p;
 }
 
 void rotate_right(treapnode** treapnode_pp) {
@@ -72,28 +124,33 @@ void rotate_left(treapnode** treapnode_pp) {
   (*treapnode_pp)->left = P;
 }
 
-void bstreap_insert(bstreap *bstreap_p, int value, double offset) {
+void bstreap_insert(bstreap *bstreap_p, knode *knode_p, int value, double offset) {
   if(bstreap_p->root == NULL) {
-    bstreap_p->root = talloc(value, offset);    
+    bstreap_p->root = talloc(knode_p, value, offset);    
     bstreap_p->n_items++;
     bstreap_p->total += offset + (double) value;    
   }
   else
-    bstreap_insert_help(bstreap_p, bstreap_p->root, value, offset, NULL, 0);
+    bstreap_insert_help(bstreap_p, bstreap_p->root, knode_p, value, offset, NULL, 0);
 }
 
-void bstreap_insert_help(bstreap* bstreap_p, treapnode *treapnode_p, int value, double offset, treapnode *parent, int left) {
+void bstreap_insert_help(bstreap* bstreap_p, treapnode *treapnode_p, knode *knode_p, int value, double offset, treapnode *parent, int left) {
+  knode_list *temp_knode_list_p;
   treapnode_p->total += offset + (double) value;
   if(treapnode_p->value == value) {
     treapnode_p->count++;
     bstreap_p->total += offset + (double) value;
     bstreap_p->n_items++;
+    temp_knode_list_p = treapnode_p->knode_list_p;
+    treapnode_p->knode_list_p = (knode_list*) malloc(sizeof(knode_list));
+    treapnode_p->knode_list_p->knode_p = knode_p;
+    treapnode_p->knode_list_p->next = temp_knode_list_p;
     return;
   }
   else if (value < treapnode_p->value) {
     
     if(treapnode_p->left == NULL) {
-      treapnode_p->left = talloc(value, offset);
+      treapnode_p->left = talloc(knode_p, value, offset);
       bstreap_p->total += offset + (double) value;
       bstreap_p->n_items++;
       if (treapnode_p->left->priority > treapnode_p->priority) {
@@ -112,7 +169,7 @@ void bstreap_insert_help(bstreap* bstreap_p, treapnode *treapnode_p, int value, 
       return;
     }
     else {
-      bstreap_insert_help(bstreap_p,treapnode_p->left, value, offset, treapnode_p, 1);
+      bstreap_insert_help(bstreap_p,treapnode_p->left, knode_p, value, offset, treapnode_p, 1);
       if (treapnode_p->left->priority > treapnode_p->priority) {
 	rotate_right(&treapnode_p);
 	if (parent != NULL) {
@@ -129,7 +186,7 @@ void bstreap_insert_help(bstreap* bstreap_p, treapnode *treapnode_p, int value, 
   }
   else {
     if(treapnode_p->right == NULL) {
-      treapnode_p->right = talloc(value, offset);
+      treapnode_p->right = talloc(knode_p, value, offset);
       bstreap_p->total += offset + (double) value;
       bstreap_p->n_items++;
       if (treapnode_p->right->priority > treapnode_p->priority) {
@@ -146,7 +203,7 @@ void bstreap_insert_help(bstreap* bstreap_p, treapnode *treapnode_p, int value, 
       return;
     }
     else {
-      bstreap_insert_help(bstreap_p,treapnode_p->right, value, offset, treapnode_p, 0);
+      bstreap_insert_help(bstreap_p,treapnode_p->right, knode_p, value, offset, treapnode_p, 0);
       if (treapnode_p->right->priority > treapnode_p->priority) {
 	rotate_left(&treapnode_p);
 	if (parent != NULL) {
@@ -163,35 +220,35 @@ void bstreap_insert_help(bstreap* bstreap_p, treapnode *treapnode_p, int value, 
   }
 }
 
-void bstreap_decrement(bstreap *bstreap_p, int value, double offset) {
+knode* bstreap_decrement(bstreap *bstreap_p, int value, double offset) {
   bstreap_p->n_items--;
   bstreap_p->total -= offset + (double) value;
   bstreap_decrement_helper(bstreap_p->root, value, offset);
 }
 
-void bstreap_decrement_helper(treapnode *treapnode_p, int value, double offset) {
+knode* bstreap_decrement_helper(treapnode *treapnode_p, int value, double offset) {
+  knode *decremented_knode_p;
   treapnode_p->total -= offset + (double) value;
 
   if(treapnode_p->value == value) {
-    treapnode_p->count--;
-    return;
+    return remove_random_knode(treapnode_p);
   }
   else if (value < treapnode_p->value) {
     if (treapnode_p->left != NULL)
-      bstreap_decrement_helper(treapnode_p->left, value, offset);
+      return bstreap_decrement_helper(treapnode_p->left, value, offset);
   }
   else {
     if (treapnode_p->right != NULL)
-      bstreap_decrement_helper(treapnode_p->right, value, offset);
+      return bstreap_decrement_helper(treapnode_p->right, value, offset);
   }
 }
 
-int bstreap_sample(bstreap *bstreap_p) {
+knode* bstreap_sample(bstreap *bstreap_p) {
   double uniform_sample = rand() / (double)RAND_MAX;
   return bstreap_sample_helper(bstreap_p, bstreap_p->root, 0.0, uniform_sample);
 }
 
-int bstreap_sample_helper(bstreap *bstreap_p, treapnode *treapnode_p, double total, double uniform_sample) {
+knode* bstreap_sample_helper(bstreap *bstreap_p, treapnode *treapnode_p, double total, double uniform_sample) {
   if(treapnode_p->left != NULL) {
     if(uniform_sample < (total + ((double) treapnode_p->left->total)) / bstreap_p->total)
       return bstreap_sample_helper(bstreap_p, treapnode_p->left, total, uniform_sample);
@@ -199,10 +256,55 @@ int bstreap_sample_helper(bstreap *bstreap_p, treapnode *treapnode_p, double tot
   }
   total += (double) treapnode_p->count * (treapnode_p->offset + (double) treapnode_p->value);
   if(uniform_sample < total / bstreap_p->total)
-    return treapnode_p -> value;
+    return sample_knode(treapnode_p);
   if(treapnode_p->right != NULL)
     return bstreap_sample_helper(bstreap_p, treapnode_p->right, total, uniform_sample);
-  return -1; //should not happen!
+  return NULL; //should not happen!
+}
+
+knode* bstreap_sample_destructive(bstreap *bstreap_p, double offset, int in) {
+  knode *returned_knode_p;
+  double uniform_sample = rand() / (double)RAND_MAX;
+  bstreap_p->n_items--;
+  returned_knode_p = bstreap_sample_destructive_helper(bstreap_p, bstreap_p->root, 0.0, uniform_sample, offset, in);
+  if (in)
+    bstreap_p->total -= offset + (double) returned_knode_p->in_degree;
+  else
+    bstreap_p->total -= offset + (double) returned_knode_p->out_degree;
+  return returned_knode_p;
+}
+
+knode* bstreap_sample_destructive_helper(bstreap *bstreap_p, treapnode *treapnode_p, double total, double uniform_sample, double offset, int in) {
+  knode *returned_knode_p;
+  if(treapnode_p->left != NULL) {
+    if(uniform_sample < (total + ((double) treapnode_p->left->total)) / bstreap_p->total) {
+      returned_knode_p = bstreap_sample_destructive_helper(bstreap_p, treapnode_p->left, total, uniform_sample, offset, in);
+      if (in)
+	treapnode_p->total -= offset + (double) returned_knode_p->in_degree;
+      else
+	treapnode_p->total -= offset + (double) returned_knode_p->out_degree;
+      return returned_knode_p;
+    }
+    total += (double) treapnode_p->left->total;
+  }
+  total += (double) treapnode_p->count * (treapnode_p->offset + (double) treapnode_p->value);
+  if(uniform_sample < total / bstreap_p->total) {
+    returned_knode_p = remove_random_knode(treapnode_p);
+    if (in)
+      treapnode_p->total -= offset + (double) returned_knode_p->in_degree;
+    else
+      treapnode_p->total -= offset + (double) returned_knode_p->out_degree;
+    return returned_knode_p;
+  }
+  if(treapnode_p->right != NULL) {
+    returned_knode_p = bstreap_sample_destructive_helper(bstreap_p, treapnode_p->right, total, uniform_sample, offset, in);
+    if (in) 
+      treapnode_p->total -= offset + (double) returned_knode_p->in_degree;
+    else
+      treapnode_p->total -= offset + (double) returned_knode_p->out_degree;
+    return returned_knode_p;
+  }
+  return NULL; //should not happen!
 }
 
 

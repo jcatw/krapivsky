@@ -3,19 +3,40 @@
 
 #include "krapivsky.h"
 
-void krapivsky(bstreap* in_degree,
-	       bstreap* out_degree,
-	       double p,
+void krapivsky(double p,
 	       double lambda,
 	       double mu,
 	       int target_n_nodes,
-	       int n_samples) {
+	       int n_samples,
+	       char *filename) {
   int i;
-  int current_n_nodes = 0;
+  FILE *file;
+  FILE *all_file;
+  char* all_file_name = "all.csv";
+  bstreap* in_degree = bstreap_new();
+  bstreap* out_degree = bstreap_new();
+  int current_n_nodes = 3;
   double uniform_sample = 0.;
 
-  int edge_to_in_degree, edge_tail, edge_head;
-  int in_degree_sample, out_degree_sample;
+  knode *knode_indeg_p, *knode_outdeg_p;
+  knode *new_knode_p;
+
+  knode *sampled_knode;
+
+  knode *knodes[target_n_nodes];
+
+  knodes[0] = kalloc(0,2);
+  knodes[1] = kalloc(1,1);
+  knodes[2] = kalloc(2,0);
+  bstreap_insert(out_degree, knodes[0], 2, mu);
+  bstreap_insert(in_degree, knodes[0], 0, lambda);
+
+  bstreap_insert(out_degree, knodes[1], 1, mu);
+  bstreap_insert(in_degree, knodes[1], 1, lambda);
+
+  bstreap_insert(out_degree, knodes[2], 0, mu);
+  bstreap_insert(in_degree, knodes[2], 2, lambda);
+
 
   printf("Simulating Krapivsky model with %d nodes\n", target_n_nodes);
   while (current_n_nodes < target_n_nodes) {
@@ -25,55 +46,66 @@ void krapivsky(bstreap* in_degree,
     
     // if we are adding a node
     if (uniform_sample < p) {
-      // sample a new node by in degree
-      edge_to_in_degree = bstreap_sample(in_degree);
-      
-      // increase the in-degree of that node
-      bstreap_insert(in_degree, edge_to_in_degree+1, lambda);
-      bstreap_decrement(in_degree, edge_to_in_degree, lambda);
+      // destructively sample a new node by in degree, increase degree, then put it back in
+      knode_indeg_p = bstreap_sample_destructive(in_degree, lambda, 1);
+      knode_indeg_p->in_degree++;
+      bstreap_insert(in_degree, knode_indeg_p, knode_indeg_p->in_degree, lambda);
       
       // add a node of out-degree 1, in-degree 0
-      bstreap_insert(out_degree, 1, mu);
-      bstreap_insert(in_degree, 0, lambda);
+      new_knode_p = kalloc(0,1);
+      bstreap_insert(out_degree, new_knode_p, 1, mu);
+      bstreap_insert(in_degree, new_knode_p, 0, lambda);
+
+      knodes[current_n_nodes] = new_knode_p;
       
       // increment the current number of nodes
       current_n_nodes++;
     }
     else {// if we are adding an edge
-      // sample the tail and head of the edge
-      edge_tail = bstreap_sample(out_degree);
-      edge_head = bstreap_sample(in_degree);
-      
-      //increase the approporiate in and out degrees
-      bstreap_insert(out_degree, edge_tail+1, mu);
-      bstreap_decrement(out_degree, edge_tail, mu);
-      
-      bstreap_insert(in_degree, edge_head+1, lambda);
-      bstreap_decrement(in_degree, edge_head, lambda);
+      // destructively sample the tail of the new edge, increment out degree, then re-insert
+      knode_outdeg_p = bstreap_sample_destructive(out_degree, mu, 0);
+      knode_outdeg_p->out_degree++;
+      bstreap_insert(out_degree, knode_outdeg_p, knode_outdeg_p->out_degree, mu);
+
+      // destructively sample the head of the new edge, increment in degree, then re-insert
+      knode_indeg_p = bstreap_sample_destructive(in_degree, lambda, 1);
+      knode_indeg_p->in_degree++;
+      bstreap_insert(in_degree, knode_indeg_p, knode_indeg_p->in_degree, lambda);
     }
   }
   printf("Simulation complete.\n");
-  printf("Sampling %d nodes (out-degree, in-degree)\n", n_samples);
+
+
+  printf("Sampling %d nodes into %s\n", n_samples, filename);
+
+  file = fopen(filename,"w");
+  fprintf(file, "out-degree,in-degree\n");
   for(i=0; i<n_samples; i++) {
-    out_degree_sample = bstreap_sample(out_degree);
-    in_degree_sample = bstreap_sample(in_degree);
-    printf("(%d, %d)\n", out_degree_sample, in_degree_sample);
+    sampled_knode = knodes[rand() % target_n_nodes];
+    fprintf(file,"%d, %d\n", sampled_knode->out_degree, sampled_knode->in_degree);
+    //printf("(%d, %d)\n", sampled_knode->out_degree, sampled_knode->in_degree);
   }
+  fclose(file);
+
+  printf("Writing all nodes into %s\n", all_file_name);
+  all_file = fopen(all_file_name, "w");
+  for(i=0;i<target_n_nodes;i++) {
+    fprintf(all_file, "%d, %d\n", knodes[i]->out_degree, knodes[i]->in_degree);
+  }
+  fclose(file);
 }
 
 void usage() {
-  printf("Usage:\nkrapivsky p lambda mu target_n_nodes n_samples\n");
+  printf("Usage:\nkrapivsky p lambda mu target_n_nodes n_samples output_filename.csv\n");
 }
 
 int main(int argc, char** argv) {
-  if (argc != 6) {
+  if (argc != 7) {
     usage();
     return -1;
   }
   double p, lambda, mu;
   int target_n_nodes, n_samples;
-  bstreap* in_degree = bstreap_new();
-  bstreap* out_degree = bstreap_new();
   
   sscanf(argv[1], "%lf", &p);
   sscanf(argv[2], "%lf", &lambda);
@@ -81,23 +113,12 @@ int main(int argc, char** argv) {
   sscanf(argv[4], "%d", &target_n_nodes);
   sscanf(argv[5], "%d", &n_samples);
   
-
-  bstreap_insert(out_degree, 2, mu);
-  bstreap_insert(in_degree, 0, lambda);
-
-  bstreap_insert(out_degree, 1, mu);
-  bstreap_insert(in_degree, 1, lambda);
-
-  bstreap_insert(out_degree, 0, mu);
-  bstreap_insert(in_degree, 2, lambda);
-
-  krapivsky(in_degree,
-	    out_degree,
-	    p,
+  krapivsky(p,
 	    lambda,
 	    mu,
 	    target_n_nodes,
-	    n_samples);
+	    n_samples,
+	    argv[6]);
   return 0;
 }
 	    
