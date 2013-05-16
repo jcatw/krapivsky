@@ -5,6 +5,7 @@
 
 int main(int, char**);
 
-void krapivsky(double,double,double,int,int,char*);
+void krapivsky(double,double,double,int,int,char*,char*);
+void usage();
 
 	       

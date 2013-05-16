@@ -8,11 +8,11 @@ void krapivsky(double p,
 	       double mu,
 	       int target_n_nodes,
 	       int n_samples,
-	       char *filename) {
+	       char *sample_file_name,
+	       char *all_file_name) {
   int i;
   FILE *file;
   FILE *all_file;
-  char* all_file_name = "all.csv";
   bstreap* in_degree = bstreap_new();
   bstreap* out_degree = bstreap_new();
   int current_n_nodes = 3;
@@ -76,9 +76,9 @@ void krapivsky(double p,
   printf("Simulation complete.\n");
 
 
-  printf("Sampling %d nodes into %s\n", n_samples, filename);
+  printf("Sampling %d nodes into %s\n", n_samples, all_file_name);
 
-  file = fopen(filename,"w");
+  file = fopen(sample_file_name,"w");
   fprintf(file, "out-degree,in-degree\n");
   for(i=0; i<n_samples; i++) {
     sampled_knode = knodes[rand() % target_n_nodes];
@@ -96,11 +96,11 @@ void krapivsky(double p,
 }
 
 void usage() {
-  printf("Usage:\nkrapivsky p lambda mu target_n_nodes n_samples output_filename.csv\n");
+  printf("Usage:\nkrapivsky p lambda mu target_n_nodes n_samples sample_output_filename.csv all_output_filename.csv\n");
 }
 
 int main(int argc, char** argv) {
-  if (argc != 7) {
+  if (argc != 8) {
     usage();
     return -1;
   }
@@ -118,7 +118,8 @@ int main(int argc, char** argv) {
 	    mu,
 	    target_n_nodes,
 	    n_samples,
-	    argv[6]);
+	    argv[6],
+	    argv[7]);
   return 0;
 }
 	    
