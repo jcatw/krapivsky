@@ -1,4 +1,11 @@
 #!/usr/bin/env python
+# args
+#  1: input node csv
+#  2: output plot filename
+#  3: p
+#  4: lambda
+#  5: mu
+
 import sys
 import numpy as np
 import matplotlib.pyplot as plt

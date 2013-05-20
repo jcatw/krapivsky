@@ -1,0 +1,69 @@
+* About
+  This is a fast implementation of the scale-free network model
+  described by Krapivsky, Rodgers, and Redner in
+  _Degree Distributions of Growing Networks_ [fn:1].
+
+  The complexity of the simulation is O(n * log n), where n is the
+  number of nodes in the simulated network.  10**6 nodes can be
+  simulated in about 5 seconds on a modern laptop.
+
+  
+* Compilation
+  If using unix/linux/osx, simply type 'make' in this directory.
+
+  If using windows, download and install cygwin
+  (http://www.cygwin.com), then type 'make' in this directory within the
+  cygwin terminal.
+
+  After compilation the 'krapivsky' binary will be available in this
+  directory.
+
+
+* Usage
+** Simulation Only
+   ./krapivsky p lambda mu target_n_nodes n_samples sample_output_filename.csv all_output_filename.csv
+
+   Simulate a model with target_n_nodes.
+
+   + p				: probability of a node-creation step
+   + lambda			: in-degree probability offset
+   + mu				: out-degree probability offset
+   + target_n_nodes		: number of nodes in the simulated network
+   + n_samples			: number of nodes to sample from the simulated network
+   + sample_output_filename.csv	: file for the n_samples samples
+   + all_output_filename.csv	: file for all nodes
+
+** Simulation & Analysis
+   ./generate-sample-plot.sh tag p lambda mu target_n_nodes n_samples
+
+   Simulate a model with target_n_nodes nodes, then produce diagnostic plots.
+   
+   + tag		: string identifier for this simulation's results
+   + p			: probability of a node-creation step
+   + lambda		: in-degree probability offset
+   + mu			: out-degree probability offset
+   + target_n_nodes	: number of nodes in the simulated network
+   + n_samples		: number of nodes to sample from the simulated network
+
+   Executing this script creates the directory
+   results/tag_p_lambda_mu_target_n_nodes/.  Within this directory, one
+   will find
+
+   + command.txt	: the 'krapivsky' command used to generate these results
+   + sample.csv		: sampled nodes
+   + all.csv		: all nodes
+   + log-ccdf_..._.png  : log-log plot of the degree ccdfs with
+                          comparisons to predicted values.
+
+* Requirements
+** Simulation Only
+   A C compiler with the standard libraries.
+
+** Simulation & Analysis
+   A C compiler with the standard libraries.
+
+   Python 2.7X with the numpy, matplotlib, and statsmodels libraries.
+
+
+* References
+[fn:1] http://arxiv.org/abs/cond-mat/0012181

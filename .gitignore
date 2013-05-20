@@ -1,3 +1,5 @@
 *.dSYM
 krapivsky
 bstreap_tester
+*.o
+results/*

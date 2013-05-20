@@ -1,8 +1,18 @@
 #!/bin/bash
+# $1: tag
+# $2: p
+# $3: lambda
+# $4: mu
+# $5: target_n_nodes
+# $6: n_samples
 
 dir="results/$1_$2_$3_$4_$5"
-mkdir ${dir}
-./krapivsky $2 $3 $4 $5 $6 ${dir}/sample.csv ${dir}/all.csv
-./plot-krapivsky.py ${dir}/all.csv ${dir}/log-ccdf_$1_$2_$3_$4_$5.png $2 $3 $4
+if [ -d "${dir}" ]; then
+    echo "${dir} already exists, please choose a different tag"
+else
+    mkdir ${dir}
+    ./krapivsky $2 $3 $4 $5 $6 ${dir}/sample.csv ${dir}/all.csv
+    ./src/py/plot-krapivsky.py ${dir}/all.csv ${dir}/log-ccdf_$1_$2_$3_$4_$5.png $2 $3 $4
 
-echo "./krapivsky $2 $3 $4 $5 $6 ${dir}/sample.csv ${dir}/all.csv" > ${dir}/command.txt
+    echo "./krapivsky $2 $3 $4 $5 $6 ${dir}/sample.csv ${dir}/all.csv" > ${dir}/command.txt
+fi
