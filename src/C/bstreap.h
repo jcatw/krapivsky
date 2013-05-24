@@ -1,14 +1,21 @@
 #include <stdlib.h>
 
-typedef struct knode_temp {
+typedef struct knode_temp knode;
+typedef struct knode_list_temp knode_list;
+
+
+struct knode_temp {
+  int id;
   int in_degree;
   int out_degree;
-} knode;
+  knode_list *adjacency_list;
+};
 
-//typedef struct knode_list_temp {
-//  knode *knode_p;
-//  struct knode_list_temp *next;
-//} knode_list;
+struct knode_list_temp {
+  knode *knode_p;
+  knode_list *next;
+};
+
 
 typedef struct treapnode_temp {
   int value;
@@ -27,7 +34,9 @@ typedef struct {
   treapnode* root;
 } bstreap;
 
-knode* kalloc(int, int);
+knode* kalloc(int, int, int);
+
+void extend_knode_list(knode*, knode*);
 
 bstreap* bstreap_new();
 

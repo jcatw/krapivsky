@@ -12,12 +12,22 @@ bstreap* bstreap_new() {
   return new_bstreap_p;
 }
 
-knode* kalloc(int in_degree, int out_degree) {
+knode* kalloc(int id, int in_degree, int out_degree) {
   knode *knode_p = (knode*) malloc(sizeof(knode));
+  knode_p->id = id;
   knode_p->in_degree = in_degree;
   knode_p->out_degree = out_degree;
+  knode_p->adjacency_list = NULL;
 
   return knode_p;
+}
+
+void add_adjacent_node(knode *knode_from, knode *knode_to) {
+  knode_list *tmp;
+  tmp = knode_from->adjacency_list;
+  knode_from->adjacency_list = (knode_list*) malloc(sizeof(knode_list));
+  knode_from->adjacency_list->knode_p = knode_to;
+  knode_from->adjacency_list->next = tmp;
 }
 
 treapnode* talloc(knode* knode_p, int value, double offset) {
