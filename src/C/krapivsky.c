@@ -150,6 +150,8 @@ int main(int argc, char** argv) {
   }
   double p, lambda, mu;
   int target_n_nodes, n_samples;
+
+  srand ( (unsigned)time ( NULL ) );
   
   sscanf(argv[1], "%lf", &p);
   sscanf(argv[2], "%lf", &lambda);
