@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "krapivsky.h"
 
 void krapivsky(double p,
@@ -69,6 +66,7 @@ void krapivsky(double p,
     
     // if we are adding a node
     if (uniform_sample < p) {
+      //printf("Step: node addition.\n");
       // destructively sample a new node by in degree, increase degree, then put it back in
       knode_indeg_p = bstreap_sample_destructive(in_degree, lambda, 1);
       knode_indeg_p->in_degree++;
@@ -86,6 +84,7 @@ void krapivsky(double p,
       current_n_nodes++;
     }
     else {// if we are adding an edge
+      //printf("Step: edge addition.\n");
       // destructively sample the tail of the new edge, increment out degree, then re-insert
       knode_outdeg_p = bstreap_sample_destructive(out_degree, mu, 0);
       knode_outdeg_p->out_degree++;
@@ -98,6 +97,17 @@ void krapivsky(double p,
 
       add_adjacent_node(knode_outdeg_p, knode_indeg_p);
     }
+    //printf("in-degree treap:\n");
+    //printf("id:\n");
+    //structure_id(in_degree->root,0);
+    //printf("total:\n");
+    //structure_total(in_degree->root,0);
+    //
+    //printf("out-degree treap:\n");
+    //printf("id:\n");
+    //structure_id(out_degree->root,0);
+    //printf("total:\n");
+    //structure_total(out_degree->root,0);
   }
   printf("Simulation complete.\n");
 
