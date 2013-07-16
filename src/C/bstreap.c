@@ -118,19 +118,8 @@ void bstreap_insert(bstreap *bstreap_p, knode *knode_p, int value, double offset
 }
 
 void bstreap_insert_help(bstreap* bstreap_p, treapnode *treapnode_p, knode *knode_p, int value, double offset, treapnode *parent, int left) {
-  //knode_list *temp_knode_list_p;
   treapnode_p->total += offset + (double) value;
-  //if(treapnode_p->value == value) {
-  //  treapnode_p->count++;
-  //  bstreap_p->total += offset + (double) value;
-  //  bstreap_p->n_items++;
-  //  temp_knode_list_p = treapnode_p->knode_list_p;
-  //  treapnode_p->knode_list_p = (knode_list*) malloc(sizeof(knode_list));
-  //  treapnode_p->knode_list_p->knode_p = knode_p;
-  //  treapnode_p->knode_list_p->next = temp_knode_list_p;
-  //  return;
-  //}
-  //else if (value < treapnode_p->value) {
+  
   if (value <= treapnode_p->value) {
     if(treapnode_p->left == NULL) {
       treapnode_p->left = talloc(knode_p, value, offset);
