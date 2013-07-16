@@ -150,34 +150,96 @@ void krapivsky(double p,
 }
 
 void usage() {
-  printf("Usage:\nkrapivsky p lambda mu target_n_nodes n_samples sample_output_filename.csv all_output_filename.csv node_output_filename.csv edge_output_filename.csv\n");
+  printf("Usage:\nkrapivsky [options] nnodes\n\n \
+\tnnodes: number of nodes to simulate\n\n \
+\toptions:\n \
+\t--------\n \
+\t\t--p:\t\tmodel parameter p, the probability of taking a node step.  (default: p=0.5) \n \
+\t\t--lambda:\tmodel parameter lambda, the in-degree fitness of nodes.  (default: lambda=0.2)\n \
+\t\t--mu:\t\tmodel parameter mu, the out-degree fitness of nodes.  (default: mu=0.2)\n \
+\t\t--nsamples:\tnumber of in-degree,out-degree samples to take.  (default: nsamples=100)\n \
+\t\t--samplefile:\tfilename for sample in-degree,out-degree output.  (default: samplefile=\"samples.csv\")\n \
+\t\t--allfile:\tfilename for all in-degree,out-degree pairs.  (default: allfile=\"allsamples.csv\")\n \
+\t\t--nodefile:\tfilename for nodes.  (default: nodefile=\"nodes.csv\")\n \
+\t\t--edgefile:\tfilename for edges.  (default: edgefile=\"edges.csv\"\n \
+\n");
 }
 
 int main(int argc, char** argv) {
-  if (argc != 10) {
+  if (argc < 2) {
     usage();
     return -1;
   }
-  double p, lambda, mu;
-  int target_n_nodes, n_samples;
+  int nnodes;
+
+  double p=0.5;
+  double lambda=0.2;
+  double mu=0.2;
+  int nsamples=100;
+  char samplefile [ARGLEN];//= (char*) malloc(ARGLEN * sizeof(char))  ;//="samples.csv";
+  char allfile    [ARGLEN];//= (char*) malloc(ARGLEN * sizeof(char))  ;//="allsamples.csv";
+  char nodefile   [ARGLEN];//= (char*) malloc(ARGLEN * sizeof(char))  ;//="nodes.csv";
+  char edgefile   [ARGLEN];//= (char*) malloc(ARGLEN * sizeof(char))  ;//="edges.csv";
 
   srand ( (unsigned)time ( NULL ) );
   
-  sscanf(argv[1], "%lf", &p);
-  sscanf(argv[2], "%lf", &lambda);
-  sscanf(argv[3], "%lf", &mu);
-  sscanf(argv[4], "%d", &target_n_nodes);
-  sscanf(argv[5], "%d", &n_samples);
-  
+  while(argc > 1 && argv[1][0] == '-' && argv[1][1] == '-') {  //only permits --arguments (no -arguments)
+    if( strcmp(&argv[1][2],"p") == 0) {
+      sscanf(argv[2], "%lf", &p);
+      argc-=2;
+      argv+=2;
+    }
+    else if ( strcmp(&argv[1][2],"lambda") == 0 ) {
+      sscanf(argv[2], "%lf", &lambda);
+      argc-=2;
+      argv+=2;
+    }
+    else if ( strcmp(&argv[1][2],"mu") == 0) {
+      sscanf(argv[2], "%lf", &mu);
+      argc-=2;
+      argv+=2;
+    }
+    else if ( strcmp(&argv[1][2],"nsamples") == 0) {
+      sscanf(argv[2], "%d", &nsamples);
+      argc-=2;
+      argv+=2;
+    }
+    else if ( strcmp(&argv[1][2],"samplefile") == 0 ) {
+      strcpy(samplefile,argv[2]);
+      argc-=2;
+      argv+=2;
+    }
+    else if ( strcmp(&argv[1][2],"allfile") == 0) {
+      strcpy(allfile,argv[2]);
+      argc-=2;
+      argv+=2;
+    }
+    else if ( strcmp(&argv[1][2],"nodefile") == 0) {
+      strcpy(nodefile,argv[2]);
+      argc-=2;
+      argv+=2;
+    }
+    else if ( strcmp(&argv[1][2],"edgefile") == 0) {
+      strcpy(edgefile,argv[2]);
+      argc-=2;
+      argv+=2;
+    }
+  }
+  if(argc != 2) {
+    usage();
+    return -1;
+  }
+  sscanf(argv[1], "%d", &nnodes);
+
   krapivsky(p,
 	    lambda,
 	    mu,
-	    target_n_nodes,
-	    n_samples,
-	    argv[6],
-	    argv[7],
-	    argv[8],
-	    argv[9]);
+	    nnodes,
+	    nsamples,
+	    samplefile,
+	    allfile,
+	    nodefile,
+	    edgefile);
   return 0;
 }
 	    

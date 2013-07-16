@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
+
+#define ARGLEN 128
 
 #include "bstreap.h"
 

@@ -13,12 +13,12 @@ else
     mkdir ${dir}
 
     echo "Generating network..."
-    ./krapivsky $2 $3 $4 $5 $6 ${dir}/sample.csv ${dir}/all.csv ${dir}/nodes.csv ${dir}/edges.csv
+    ./krapivsky --p $2 --lambda $3 --mu $4 --nsamples $6 --samplefile ${dir}/sample.csv --allfile ${dir}/all.csv --nodefile ${dir}/nodes.csv --edgefile ${dir}/edges.csv $5
 
     echo "Plotting degree distribution..."
     ./src/py/plot-krapivsky.py ${dir}/all.csv ${dir}/log-ccdf_$1_$2_$3_$4_$5.png $2 $3 $4
     
-    echo "./krapivsky $2 $3 $4 $5 $6 ${dir}/sample.csv ${dir}/all.csv ${dir}/nodes.csv ${dir}/edges.csv" > ${dir}/command.txt
+    echo "./krapivsky --p $2 --lambda $3 --mu $4 --nsamples $6 --samplefile ${dir}/sample.csv --allfile ${dir}/all.csv --nodefile ${dir}/nodes.csv --edgefile ${dir}/edges.csv $5" > ${dir}/command.txt
 
     echo "Done."
 fi
