@@ -10,6 +10,8 @@ struct knode_temp {
   int id;
   int in_degree;
   int out_degree;
+  double lambda;
+  double mu;
   knode_list *adjacency_list;
 };
 
@@ -36,7 +38,7 @@ typedef struct {
   treapnode* root;
 } bstreap;
 
-knode* kalloc(int, int, int);
+knode* kalloc(int, int, int, double, double);
 
 void extend_knode_list(knode*, knode*);
 void add_adjacent_node(knode*, knode*);
@@ -51,8 +53,8 @@ void bstreap_insert(bstreap*, knode*, int, double);
 void bstreap_insert_help(bstreap*,treapnode*,knode*,int,double,treapnode*,int);
 knode* bstreap_sample(bstreap*);
 knode* bstreap_sample_helper(bstreap*, treapnode*, double, double);
-knode* bstreap_sample_destructive(bstreap*,double,int);
-knode* bstreap_sample_destructive_helper(bstreap*, treapnode*, treapnode*, double, double, double, int, int);
+knode* bstreap_sample_destructive(bstreap*,int);
+knode* bstreap_sample_destructive_helper(bstreap*, treapnode*, treapnode*, double, double, int, int);
 void bstreap_delete_node(bstreap*, treapnode*, treapnode*, int);
 
 int heap_property_satisfied(bstreap*);

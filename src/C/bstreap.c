@@ -12,11 +12,13 @@ bstreap* bstreap_new() {
   return new_bstreap_p;
 }
 
-knode* kalloc(int id, int in_degree, int out_degree) {
+knode* kalloc(int id, int in_degree, int out_degree, double lambda, double mu) {
   knode *knode_p = (knode*) malloc(sizeof(knode));
   knode_p->id = id;
   knode_p->in_degree = in_degree;
   knode_p->out_degree = out_degree;
+  knode_p->lambda = lambda;
+  knode_p->mu = mu;
   knode_p->adjacency_list = NULL;
 
   return knode_p;
@@ -211,18 +213,18 @@ knode* bstreap_sample_helper(bstreap *bstreap_p, treapnode *treapnode_p, double 
   return NULL; //should not happen!
 }
 
-knode* bstreap_sample_destructive(bstreap *bstreap_p, double offset, int in) {
+knode* bstreap_sample_destructive(bstreap *bstreap_p, int in) {
   knode *returned_knode_p;
   double uniform_sample = rand() / (double)RAND_MAX;
 
   //printf("Call to bstreap_sample_destructive\n");
   
   bstreap_p->n_items--;
-  returned_knode_p = bstreap_sample_destructive_helper(bstreap_p, bstreap_p->root, NULL, 0.0, uniform_sample, offset, in, 0);
+  returned_knode_p = bstreap_sample_destructive_helper(bstreap_p, bstreap_p->root, NULL, 0.0, uniform_sample, in, 0);
   if (in)
-    bstreap_p->total -= offset + (double) returned_knode_p->in_degree;
+    bstreap_p->total -= returned_knode_p->lambda + (double) returned_knode_p->in_degree;
   else
-    bstreap_p->total -= offset + (double) returned_knode_p->out_degree;
+    bstreap_p->total -= returned_knode_p->mu + (double) returned_knode_p->out_degree;
   if(!heap_property_satisfied(bstreap_p)) {
     fprintf(stderr,"Heap property violated after call to bstreap_sample_destructive.\n");
     fprintf(stderr,"In: %d.\n",in);
@@ -242,17 +244,17 @@ knode* bstreap_sample_destructive(bstreap *bstreap_p, double offset, int in) {
   return returned_knode_p;
 }
 
-knode* bstreap_sample_destructive_helper(bstreap *bstreap_p, treapnode *treapnode_p, treapnode *parent_p, double total, double uniform_sample, double offset, int in, int left) {
+knode* bstreap_sample_destructive_helper(bstreap *bstreap_p, treapnode *treapnode_p, treapnode *parent_p, double total, double uniform_sample,  int in, int left) {
   knode *returned_knode_p;
 
   // check left
   if(treapnode_p->left != NULL) {
     if(uniform_sample < (total + ((double) treapnode_p->left->total)) / bstreap_p->total) {
-      returned_knode_p = bstreap_sample_destructive_helper(bstreap_p, treapnode_p->left, treapnode_p, total, uniform_sample, offset, in, 1);
+      returned_knode_p = bstreap_sample_destructive_helper(bstreap_p, treapnode_p->left, treapnode_p, total, uniform_sample, in, 1);
       if (in)
-	treapnode_p->total -= offset + (double) returned_knode_p->in_degree;
+	treapnode_p->total -= returned_knode_p->lambda + (double) returned_knode_p->in_degree;
       else
-	treapnode_p->total -= offset + (double) returned_knode_p->out_degree;
+	treapnode_p->total -= returned_knode_p->mu + (double) returned_knode_p->out_degree;
       return returned_knode_p;
     }
     total += (double) treapnode_p->left->total;
@@ -264,9 +266,9 @@ knode* bstreap_sample_destructive_helper(bstreap *bstreap_p, treapnode *treapnod
     returned_knode_p = treapnode_p->knode_p;
     treapnode_p->count--;
     if (in)
-      treapnode_p->total -= offset + (double) returned_knode_p->in_degree;
+      treapnode_p->total -= returned_knode_p->lambda + (double) returned_knode_p->in_degree;
     else
-      treapnode_p->total -= offset + (double) returned_knode_p->out_degree;
+      treapnode_p->total -= returned_knode_p->mu + (double) returned_knode_p->out_degree;
 
     // clean up
     if(treapnode_p->count == 0)
@@ -277,11 +279,11 @@ knode* bstreap_sample_destructive_helper(bstreap *bstreap_p, treapnode *treapnod
 
   // check right
   if(treapnode_p->right != NULL) {
-    returned_knode_p = bstreap_sample_destructive_helper(bstreap_p, treapnode_p->right, treapnode_p, total, uniform_sample, offset, in, 0);
+    returned_knode_p = bstreap_sample_destructive_helper(bstreap_p, treapnode_p->right, treapnode_p, total, uniform_sample, in, 0);
     if (in) 
-      treapnode_p->total -= offset + (double) returned_knode_p->in_degree;
+      treapnode_p->total -= returned_knode_p->lambda + (double) returned_knode_p->in_degree;
     else
-      treapnode_p->total -= offset + (double) returned_knode_p->out_degree;
+      treapnode_p->total -= returned_knode_p->mu + (double) returned_knode_p->out_degree;
     return returned_knode_p;
   }
   fprintf(stderr,"Failed to sample a node.\n");

@@ -6,8 +6,11 @@ krapivsky: bstreap.o krapivsky.o
 bstreap.o: src/C/bstreap.c
 	${CC} ${CFLAGS} -Isrc/C -c src/C/bstreap.c
 
-krapivsky.o: bstreap.o src/C/krapivsky.c
+krapivsky.o: ziggurat.o bstreap.o src/C/krapivsky.c
 	${CC} ${CFLAGS} -Isrc/C -c src/C/krapivsky.c
+
+ziggurat.o: lib/ziggurat.c
+	${CC} ${CFLAGS} -Ilib -c lib/ziggurat.c
 
 clean:
 	rm *.o krapivsky

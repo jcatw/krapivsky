@@ -40,9 +40,9 @@ void krapivsky(double p,
   //  \     |
   //   \    v
   //    --> 2
-  knodes[0] = kalloc(0,0,2);
-  knodes[1] = kalloc(1,1,1);
-  knodes[2] = kalloc(2,2,0);
+  knodes[0] = kalloc(0,0,2,lambda,mu);
+  knodes[1] = kalloc(1,1,1,lambda,mu);
+  knodes[2] = kalloc(2,2,0,lambda,mu);
 
   add_adjacent_node(knodes[0],knodes[1]);
   add_adjacent_node(knodes[0],knodes[2]);
@@ -68,12 +68,12 @@ void krapivsky(double p,
     if (uniform_sample < p) {
       //printf("Step: node addition.\n");
       // destructively sample a new node by in degree, increase degree, then put it back in
-      knode_indeg_p = bstreap_sample_destructive(in_degree, lambda, 1);
+      knode_indeg_p = bstreap_sample_destructive(in_degree, 1);
       knode_indeg_p->in_degree++;
       bstreap_insert(in_degree, knode_indeg_p, knode_indeg_p->in_degree, lambda);
       
       // add a node of out-degree 1, in-degree 0
-      new_knode_p = kalloc(current_n_nodes,0,1);
+      new_knode_p = kalloc(current_n_nodes,0,1,lambda,mu);
       add_adjacent_node(new_knode_p, knode_indeg_p);
       bstreap_insert(out_degree, new_knode_p, 1, mu);
       bstreap_insert(in_degree, new_knode_p, 0, lambda);
@@ -86,12 +86,12 @@ void krapivsky(double p,
     else {// if we are adding an edge
       //printf("Step: edge addition.\n");
       // destructively sample the tail of the new edge, increment out degree, then re-insert
-      knode_outdeg_p = bstreap_sample_destructive(out_degree, mu, 0);
+      knode_outdeg_p = bstreap_sample_destructive(out_degree, 0);
       knode_outdeg_p->out_degree++;
       bstreap_insert(out_degree, knode_outdeg_p, knode_outdeg_p->out_degree, mu);
 
       // destructively sample the head of the new edge, increment in degree, then re-insert
-      knode_indeg_p = bstreap_sample_destructive(in_degree, lambda, 1);
+      knode_indeg_p = bstreap_sample_destructive(in_degree, 1);
       knode_indeg_p->in_degree++;
       bstreap_insert(in_degree, knode_indeg_p, knode_indeg_p->in_degree, lambda);
 
