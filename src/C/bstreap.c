@@ -102,7 +102,9 @@ void bstreap_insert(bstreap *bstreap_p, knode *knode_p, int value, double offset
   }
   else
     bstreap_insert_help(bstreap_p, bstreap_p->root, knode_p, value, offset, NULL, 0);
-  
+
+  // these checks are O(n)
+  /*
   if(!heap_property_satisfied(bstreap_p)) {
     fprintf(stderr,"Heap property violated after call to bstreap_insert.\n");
     fprintf(stderr,"Id structure\n");
@@ -117,6 +119,7 @@ void bstreap_insert(bstreap *bstreap_p, knode *knode_p, int value, double offset
     fprintf(stderr,"Total structure\n");
     //structure_total(bstreap_p->root,0);
   }
+  */
 }
 
 void bstreap_insert_help(bstreap* bstreap_p, treapnode *treapnode_p, knode *knode_p, int value, double offset, treapnode *parent, int left) {
@@ -225,6 +228,9 @@ knode* bstreap_sample_destructive(bstreap *bstreap_p, int in) {
     bstreap_p->total -= returned_knode_p->lambda + (double) returned_knode_p->in_degree;
   else
     bstreap_p->total -= returned_knode_p->mu + (double) returned_knode_p->out_degree;
+
+  // these checks are O(n)
+  /*
   if(!heap_property_satisfied(bstreap_p)) {
     fprintf(stderr,"Heap property violated after call to bstreap_sample_destructive.\n");
     fprintf(stderr,"In: %d.\n",in);
@@ -241,6 +247,7 @@ knode* bstreap_sample_destructive(bstreap *bstreap_p, int in) {
     fprintf(stderr,"Total structure\n");
     //structure_total(bstreap_p->root,0);
   }
+  */
   return returned_knode_p;
 }
 

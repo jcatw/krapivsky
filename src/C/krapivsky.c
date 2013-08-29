@@ -161,7 +161,7 @@ void krapivsky(double p,
   node_file = fopen(node_file_name, "w");
   edge_file = fopen(edge_file_name, "w");
   for(i=0; i<target_n_nodes; i++) {
-    fprintf(node_file,"%d\n",knodes[i]->id);
+    fprintf(node_file,"%d,%f,%f\n",knodes[i]->id,knodes[i]->lambda,knodes[i]->mu);
 
     adjacency_item = knodes[i]->adjacency_list;
     while(adjacency_item != NULL) {
