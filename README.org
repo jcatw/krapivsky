@@ -30,9 +30,9 @@
  		--p:		model parameter p, the probability of taking a node step.  (default: p=0.5) 
  		--lambda:	model parameter lambda, the in-degree fitness of nodes.  (default: lambda=0.2)
  		--mu:		model parameter mu, the out-degree fitness of nodes.  (default: mu=0.2)
- 		--nsamples:	number of in-degree,out-degree samples to take.  (default: nsamples=100)
- 		--samplefile:	filename for sample in-degree,out-degree output.  (default: samplefile="samples.csv")
- 		--allfile:	filename for all in-degree,out-degree pairs.  (default: allfile="allsamples.csv")
+ 		--nsamples:	number of out-degree,in-degree samples to take.  (default: nsamples=100)
+ 		--samplefile:	filename for sample out-degree,in-degree output.  (default: samplefile="samples.csv")
+ 		--allfile:	filename for all out-degree,in-degree pairs.  (default: allfile="allsamples.csv")
  		--nodefile:	filename for nodes.  (default: nodefile="nodes.csv")
  		--edgefile:	filename for edges.  (default: edgefile="edges.csv"
  		--variable-fitness: if this flag is present, sample mu and lambda from a standard lognormal with means defined by the mu and lambda parameters.
@@ -54,8 +54,8 @@
    will find
 
    + command.txt	: the 'krapivsky' command used to generate these results
-   + sample.csv		: sampled nodes
-   + all.csv		: all nodes
+   + sample.csv		: sampled nodes (format: out-degree,in-degree)
+   + all.csv		: all nodes (same format as sample.csv)
    + log-ccdf_..._.png  : log-log plot of the degree ccdfs with
                           comparisons to predicted values.
 
