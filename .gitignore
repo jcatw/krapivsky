@@ -4,3 +4,5 @@ bstreap_tester
 *.o
 results/*
 .DS_Store
+*.csv
+
