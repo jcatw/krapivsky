@@ -184,9 +184,9 @@ void usage() {
 \t\t--p:\t\tmodel parameter p, the probability of taking a node step.  (default: p=0.5) \n \
 \t\t--lambda:\tmodel parameter lambda, the in-degree fitness of nodes.  (default: lambda=0.2)\n \
 \t\t--mu:\t\tmodel parameter mu, the out-degree fitness of nodes.  (default: mu=0.2)\n \
-\t\t--nsamples:\tnumber of in-degree,out-degree samples to take.  (default: nsamples=100)\n \
-\t\t--samplefile:\tfilename for sample in-degree,out-degree output.  (default: samplefile=\"samples.csv\")\n \
-\t\t--allfile:\tfilename for all in-degree,out-degree pairs.  (default: allfile=\"allsamples.csv\")\n \
+\t\t--nsamples:\tnumber of out-degree,in-degree samples to take.  (default: nsamples=100)\n \
+\t\t--samplefile:\tfilename for sample out-degree,in-degree output.  (default: samplefile=\"samples.csv\")\n \
+\t\t--allfile:\tfilename for all out-degree,in-degree pairs.  (default: allfile=\"allsamples.csv\")\n \
 \t\t--nodefile:\tfilename for nodes.  (default: nodefile=\"nodes.csv\")\n \
 \t\t--edgefile:\tfilename for edges.  (default: edgefile=\"edges.csv\"\n \
 \t\t--variable-fitness: if this flag is present, sample mu and lambda from a standard lognormal with means defined by the mu and lambda parameters.\n \
