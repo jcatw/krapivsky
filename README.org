@@ -27,15 +27,15 @@
 
  	options:
  	--------
- 		--p:		model parameter p, the probability of taking a node step.  (default: p=0.5) 
- 		--lambda:	model parameter lambda, the in-degree fitness of nodes.  (default: lambda=0.2)
- 		--mu:		model parameter mu, the out-degree fitness of nodes.  (default: mu=0.2)
- 		--nsamples:	number of out-degree,in-degree samples to take.  (default: nsamples=100)
- 		--samplefile:	filename for sample out-degree,in-degree output.  (default: samplefile="samples.csv")
- 		--allfile:	filename for all out-degree,in-degree pairs.  (default: allfile="allsamples.csv")
- 		--nodefile:	filename for nodes.  (default: nodefile="nodes.csv")
- 		--edgefile:	filename for edges.  (default: edgefile="edges.csv"
- 		--variable-fitness: if this flag is present, sample mu and lambda from a standard lognormal with means defined by the mu and lambda parameters.
+ 	+ p:		model parameter p, the probability of taking a node step.  (default: p=0.5) 
+ 	+ lambda:	model parameter lambda, the in-degree fitness of nodes.  (default: lambda=0.2)
+ 	+ mu:		model parameter mu, the out-degree fitness of nodes.  (default: mu=0.2)
+ 	+ nsamples:	number of out-degree,in-degree samples to take.  (default: nsamples=100)
+ 	+ samplefile:	filename for sample out-degree,in-degree output.  (default: samplefile="samples.csv")
+ 	+ allfile:	filename for all out-degree,in-degree pairs.  (default: allfile="allsamples.csv")
+ 	+ nodefile:	filename for nodes.  (default: nodefile="nodes.csv")
+ 	+ edgefile:	filename for edges.  (default: edgefile="edges.csv"
+ 	+ variable-fitness: if this flag is present, sample mu and lambda from a standard lognormal with means defined by the mu and lambda parameters.
 
 ** Simulation & Analysis
    ./generate-sample-plot.sh tag p lambda mu target_n_nodes n_samples
