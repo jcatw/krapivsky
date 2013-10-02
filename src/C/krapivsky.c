@@ -3,13 +3,20 @@
 void krapivsky(double p,
 	       double lambda,
 	       double mu,
-	       int target_n_nodes,
+	       unsigned long int target_n_nodes,
 	       int n_samples,
 	       char *sample_file_name,
 	       char *all_file_name,
 	       char *node_file_name,
 	       char *edge_file_name,
 	       int variable_fitness) {
+  unsigned long int jsr = time ( NULL );
+  // parameters for the random sampler
+  int kn[128];
+  float fn[128];
+  float wn[128];
+  
+  r4_nor_setup(kn,fn,wn);
   int i;
   
   FILE *file;
@@ -20,7 +27,7 @@ void krapivsky(double p,
   bstreap* in_degree = bstreap_new();
   bstreap* out_degree = bstreap_new();
   
-  int current_n_nodes = 3;
+  unsigned long int current_n_nodes = 3;
   
   double uniform_sample = 0.;
 
@@ -30,14 +37,11 @@ void krapivsky(double p,
   
   knode_list *adjacency_item;
 
-  knode *knodes[target_n_nodes];
+  //knode *knodes[target_n_nodes];
+  knode **knodes = (knode**) malloc( target_n_nodes * sizeof(knode*) );
 
-  // parameters for the random sampler
-  int kn[128];
-  float fn[128];
-  float wn[128];
-  unsigned long int jsr = time ( NULL );
-  r4_nor_setup(kn,fn,wn);
+
+  
 
   // initial network:
   // 0 --> 1

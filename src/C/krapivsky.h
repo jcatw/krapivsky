@@ -10,7 +10,7 @@
 #include "ziggurat.h"
 
 int main(int, char**);
-void krapivsky(double,double,double,int,int,char*,char*,char*,char*,int);
+void krapivsky(double,double,double,unsigned long int,int,char*,char*,char*,char*,int);
 void usage();
 
 	       
