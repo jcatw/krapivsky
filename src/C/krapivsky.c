@@ -10,40 +10,50 @@ void krapivsky(double p,
 	       char *node_file_name,
 	       char *edge_file_name,
 	       int variable_fitness) {
-  unsigned long int jsr = time ( NULL );
+
   // parameters for the random sampler
+  unsigned long int jsr = time ( NULL );
   int kn[128];
   float fn[128];
   float wn[128];
   
-  r4_nor_setup(kn,fn,wn);
+  // counter
   int i;
-  
+
+  // output files
   FILE *file;
   FILE *all_file;
   FILE *node_file;
   FILE *edge_file;
-  
+
+  // sets of nodes indexed by in- and out-degree
+  // provide lg(n) sampling by degree distribution
   bstreap* in_degree = bstreap_new();
   bstreap* out_degree = bstreap_new();
-  
+
+  // # of nodes the simulator has generated
+  // init value of three because initial network seed has three nodes
   unsigned long int current_n_nodes = 3;
-  
+
+  // sampling parameter
   double uniform_sample = 0.;
 
+  // node pointers
   knode *knode_indeg_p, *knode_outdeg_p;
   knode *new_knode_p;
   knode *sampled_knode;
   
   knode_list *adjacency_item;
 
+  // array of all nodes
+  // allocating this locally blows out the stack! Must be malloc'd
   //knode *knodes[target_n_nodes];
   knode **knodes = (knode**) malloc( target_n_nodes * sizeof(knode*) );
 
+  // initialize random sampler
+  r4_nor_setup(kn,fn,wn);
 
-  
-
-  // initial network:
+  // initial network seed:
   // 0 --> 1
   // 0 --> 2
   // 1 --> 2
@@ -52,6 +62,8 @@ void krapivsky(double p,
   //  \     |
   //   \    v
   //    --> 2
+
+  // initialize network seed
   if(variable_fitness) {
     knodes[0] = kalloc(0,0,2,
 		       (double) exp(lambda + (double) r4_nor(&jsr, kn, fn, wn)),
@@ -83,6 +95,7 @@ void krapivsky(double p,
   bstreap_insert(in_degree, knodes[2], 2, knodes[2]->lambda);
 
 
+  // main simulation loop
   printf("Simulating Krapivsky model with %d nodes\n", target_n_nodes);
   while (current_n_nodes < target_n_nodes) {
     //if (current_n_nodes % 1000 == 0)
@@ -104,11 +117,13 @@ void krapivsky(double p,
 			     (double) exp(mu + (double) r4_nor(&jsr, kn, fn, wn)));
       else
 	new_knode_p = kalloc(current_n_nodes,0,1,lambda,mu);
-      
+
+      //ensure that new node points to sampled node
       add_adjacent_node(new_knode_p, knode_indeg_p);
+      
       bstreap_insert(out_degree, new_knode_p, 1, new_knode_p->mu);
       bstreap_insert(in_degree, new_knode_p, 0, new_knode_p->lambda);
-
+      
       knodes[current_n_nodes] = new_knode_p;
       
       // increment the current number of nodes
@@ -126,6 +141,7 @@ void krapivsky(double p,
       knode_indeg_p->in_degree++;
       bstreap_insert(in_degree, knode_indeg_p, knode_indeg_p->in_degree, knode_indeg_p->lambda);
 
+      // ensure that outdegree-sampled node points to indegree-sampled node
       add_adjacent_node(knode_outdeg_p, knode_indeg_p);
     }
     //printf("in-degree treap:\n");
@@ -142,7 +158,7 @@ void krapivsky(double p,
   }
   printf("Simulation complete.\n");
 
-
+  // output everything
   printf("Sampling %d nodes into %s\n", n_samples, sample_file_name);
 
   file = fopen(sample_file_name,"w");
@@ -178,6 +194,11 @@ void krapivsky(double p,
   }
   fclose(node_file);
   fclose(edge_file);
+
+  //note: not explicitly freeing knodes ptr array or knodes themselves
+  //because simulation ends just after this returns, so there is no
+  //need.  If, for some reason, this program should continue without
+  //requiring the actual network structure, then free those up.
 }
 
 void usage() {
@@ -198,6 +219,7 @@ void usage() {
 }
 
 int main(int argc, char** argv) {
+  // parse args
   if (argc < 2) {
     usage();
     return -1;
@@ -215,7 +237,7 @@ int main(int argc, char** argv) {
   int variable_fitness = 0;
 
   
-
+  // seed random generator
   srand ( (unsigned)time ( NULL ) );
   
   while(argc > 1 && argv[1][0] == '-' && argv[1][1] == '-') {  //only permits --arguments (no -arguments)
@@ -271,6 +293,7 @@ int main(int argc, char** argv) {
   }
   sscanf(argv[1], "%d", &nnodes);
 
+  // run the simulation
   krapivsky(p,
 	    lambda,
 	    mu,
@@ -281,6 +304,8 @@ int main(int argc, char** argv) {
 	    nodefile,
 	    edgefile,
 	    variable_fitness);
+
+  // success
   return 0;
 }
 	    
