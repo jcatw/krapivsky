@@ -98,148 +98,191 @@ plt.savefig(plot_name)
 
 #####print (1. - (y_out.cumsum() / y_out.cumsum()[-1]))
 ####
-####### part 2: with reciprocation
-####
-####edgelist = []
-####
-####edgefile = open(input_edge_file_name,"r")
-####
-####for line in edgefile:
-####    edgestrings = line.strip().split(",")
-####    edgelist.append( (int(edgestrings[0]), int(edgestrings[1])) )
-####
-#####print edgelist[0]
-####    
-####edgeset = set(edgelist)
-####
-####reciprocated_edges   = []
-####unreciprocated_edges = []
-####
-####for efrom, eto in edgelist:
-####    if (eto, efrom) in edgeset:
-####        reciprocated_edges.append((eto,efrom))
-####    else:
-####        unreciprocated_edges.append((eto,efrom))
-####
-####def edgelist_to_degreedist(edgelist):
-####    #print edgelist[0]
-####    indeg = {}
-####    outdeg = {}
-####    
-####    for (efrom,eto) in edgelist:
-####        indeg[eto] = indeg.get(eto,0) + 1
-####        outdeg[efrom] = outdeg.get(efrom,0) + 1
-####    
-####    indist = {}
-####    outdist = {}
-####    
-####    for efrom in outdeg.keys():
-####        outdist[outdeg[efrom]] = outdist.get(efrom,0) + 1
-####    for eto in indeg.keys():
-####        indist[indeg[eto]] = indist.get(eto,0) + 1
-####
-####    return outdist, indist
-####
-####reciprocated_outdist, reciprocated_indist = edgelist_to_degreedist(reciprocated_edges)
-####unreciprocated_outdist, unreciprocated_indist = edgelist_to_degreedist(unreciprocated_edges)
-####
-####def degree_dict_to_arrays(degree_dict):
-####    x = degree_dict.keys()
-####    x.sort()
-####
-####    y = []
-####    for an_x in x:
-####        y.append(degree_dict[an_x])
-####
-####    x = np.array(x).astype(float)
-####        
-####    y = np.array(y).astype(float)
-####    
-####
-####    return x,y
-####
-####recip_x_in, recip_y_in = degree_dict_to_arrays(reciprocated_indist)
-####recip_x_in, recip_y_in = plottable_ccdf(recip_x_in, recip_y_in)
-####recip_x_out, recip_y_out = degree_dict_to_arrays(reciprocated_outdist)
-####recip_x_out, recip_y_out = plottable_ccdf(recip_x_out, recip_y_out)
-####
-####unrecip_x_in,  unrecip_y_in =  degree_dict_to_arrays(unreciprocated_indist)
-####unrecip_x_in,  unrecip_y_in = plottable_ccdf(unrecip_x_in,  unrecip_y_in)
-####unrecip_x_out, unrecip_y_out = degree_dict_to_arrays(unreciprocated_outdist)
-####unrecip_x_out, unrecip_y_out = plottable_ccdf(unrecip_x_out, unrecip_y_out)
-####
-####### plot recip, unrecip without all
-####plt.figure()
-####plt.title("Reciprocated and Unreciprocated Degree Distributions of the Krapivsky Model")
-####plt.xlabel("Log Degree")
-####plt.ylabel("Log CCDF")
-####
-####plt.plot(recip_x_out,
-####         recip_y_out,
-####         'cx',
-####         recip_x_in,
-####         recip_y_in,
-####         'rx',
-####         unrecip_x_out,
-####         unrecip_y_out,
-####         'kx',
-####         unrecip_x_in,
-####         unrecip_y_in,
-####         'mx')
-####         
-####
-####plt.legend(('Reciprocated Out-Degree',
-####            'Reciprocated In-Degree', 
-####            'Unreciprocated Out-Degree',
-####            'Unreciprocated In-Degree'), 
-####            loc='best')
-####
-####
-####splitname = os.path.splitext(plot_name)
-####plotname_reciprocal = splitname[0] + '_recip' + splitname[1]
-####plotname_all = splitname[0] + '_all' + splitname[1]
-####
-####plt.savefig(plotname_reciprocal)
-####
-####### plot everything
-####plt.figure()
-####plt.title("Degree Distributions of the Krapivsky Model")
-####plt.xlabel("Log Degree")
-####plt.ylabel("Log CCDF")
-####
-####plt.plot(fx_out, 
-####         fy_out, 
-####         'bx',
-####         fx_in, 
-####         fy_in, 
-####         'gx',
-####         recip_x_out,
-####         recip_y_out,
-####         'cx',
-####         recip_x_in,
-####         recip_y_in,
-####         'rx',
-####         unrecip_x_out,
-####         unrecip_y_out,
-####         'kx',
-####         unrecip_x_in,
-####         unrecip_y_in,
-####         'mx')
-####         
-####plt.figtext(0.7, 0.5, 'vout: %.2f (%.2f)\nvin: %.2f (%.2f)\np: %.2f\nlambda: %.2f\nmu: %.2f' % (np.abs(l_out[0])+1., v_out, np.abs(l_in[0])+1., v_in, p, lamb, mu),bbox=dict(boxstyle='round', color='wheat', alpha=0.5))
-####
-####plt.plot(fx_out, l_out[0] * fx_out + l_out[1], '-', color='LightBlue')
-####plt.plot(fx_in, l_in[0] * fx_in + l_in[1], '-', color='LightGreen')
-####
-####
-####plt.legend(('Out-Degree',
-####            'In-Degree',
-####            'Reciprocated Out-Degree',
-####            'Reciprocated In-Degree', 
-####            'Unreciprocated Out-Degree',
-####            'Unreciprocated In-Degree',
-####            'Out-Degree Fit', 
-####            'In-Degree Fit'), 
-####            loc='best')
-####
-####plt.savefig(plotname_all)
+### part 2: with reciprocation
+
+edgelist = []
+
+edgefile = open(input_edge_file_name,"r")
+
+for line in edgefile:
+    edgestrings = line.strip().split(",")
+    edgelist.append( (int(edgestrings[0]), int(edgestrings[1])) )
+
+#print edgelist[0]
+    
+edgeset = set(edgelist)
+
+reciprocated_edges   = []
+unreciprocated_edges = []
+
+for efrom, eto in edgelist:
+    if (eto, efrom) in edgeset:
+        reciprocated_edges.append((eto,efrom))
+    else:
+        unreciprocated_edges.append((eto,efrom))
+
+def edgelist_to_degreedist(edgelist):
+    #print edgelist[0]
+    indeg = {}
+    outdeg = {}
+    
+    for (efrom,eto) in edgelist:
+        indeg[eto] = indeg.get(eto,0) + 1
+        outdeg[efrom] = outdeg.get(efrom,0) + 1
+    
+    indist = {}
+    outdist = {}
+    
+    for efrom in outdeg.keys():
+        outdist[outdeg[efrom]] = outdist.get(outdeg[efrom],0) + 1
+    for eto in indeg.keys():
+        indist[indeg[eto]] = indist.get(indeg[eto],0) + 1
+
+    return outdist, indist
+
+total_outdist, total_indist = edgelist_to_degreedist(edgelist)
+#print 'out'
+#print total_outdist
+#print 'in'
+#print total_indist
+reciprocated_outdist, reciprocated_indist = edgelist_to_degreedist(reciprocated_edges)
+unreciprocated_outdist, unreciprocated_indist = edgelist_to_degreedist(unreciprocated_edges)
+
+def degree_dict_to_arrays(degree_dict):
+    x = degree_dict.keys()
+    x.sort()
+
+    y = []
+    for an_x in x:
+        y.append(degree_dict[an_x])
+
+    x = np.array(x).astype(float)
+        
+    y = np.array(y).astype(float)
+    
+
+    return x,y
+
+total_x_in, total_y_in = degree_dict_to_arrays(total_indist)
+total_x_in, total_y_in = plottable_ccdf(total_x_in, total_y_in)
+total_x_out, total_y_out = degree_dict_to_arrays(total_outdist)
+total_x_out, total_y_out = plottable_ccdf(total_x_out, total_y_out)
+    
+recip_x_in, recip_y_in = degree_dict_to_arrays(reciprocated_indist)
+recip_x_in, recip_y_in = plottable_ccdf(recip_x_in, recip_y_in)
+recip_x_out, recip_y_out = degree_dict_to_arrays(reciprocated_outdist)
+recip_x_out, recip_y_out = plottable_ccdf(recip_x_out, recip_y_out)
+
+unrecip_x_in,  unrecip_y_in =  degree_dict_to_arrays(unreciprocated_indist)
+unrecip_x_in,  unrecip_y_in = plottable_ccdf(unrecip_x_in,  unrecip_y_in)
+unrecip_x_out, unrecip_y_out = degree_dict_to_arrays(unreciprocated_outdist)
+unrecip_x_out, unrecip_y_out = plottable_ccdf(unrecip_x_out, unrecip_y_out)
+
+### plot recip, unrecip without all
+plt.figure()
+plt.title("Reciprocated and Unreciprocated Degree Distributions of the Krapivsky Model")
+plt.xlabel("Log Degree")
+plt.ylabel("Log CCDF")
+
+plt.plot(recip_x_out,
+         recip_y_out,
+         'cx',
+         recip_x_in,
+         recip_y_in,
+         'rx',
+         unrecip_x_out,
+         unrecip_y_out,
+         'kx',
+         unrecip_x_in,
+         unrecip_y_in,
+         'mx')
+         
+
+plt.legend(('Reciprocated Out-Degree',
+            'Reciprocated In-Degree', 
+            'Unreciprocated Out-Degree',
+            'Unreciprocated In-Degree'), 
+            loc='best')
+
+
+splitname = os.path.splitext(plot_name)
+plotname_reciprocal = splitname[0] + '_recip' + splitname[1]
+plotname_all = splitname[0] + '_all' + splitname[1]
+
+plt.savefig(plotname_reciprocal)
+
+### plot everything
+plt.figure()
+plt.title("Degree Distributions of the Krapivsky Model")
+plt.xlabel("Log Degree")
+plt.ylabel("Log CCDF")
+
+plt.plot(fx_out, 
+         fy_out, 
+         'bx',
+         fx_in, 
+         fy_in, 
+         'gx',
+         recip_x_out,
+         recip_y_out,
+         'cx',
+         recip_x_in,
+         recip_y_in,
+         'rx',
+         unrecip_x_out,
+         unrecip_y_out,
+         'kx',
+         unrecip_x_in,
+         unrecip_y_in,
+         'mx')
+         
+plt.figtext(0.7, 0.5, 'vout: %.2f (%.2f)\nvin: %.2f (%.2f)\np: %.2f\nlambda: %.2f\nmu: %.2f' % (np.abs(l_out[0])+1., v_out, np.abs(l_in[0])+1., v_in, p, lamb, mu),bbox=dict(boxstyle='round', color='wheat', alpha=0.5))
+
+plt.plot(fx_out, l_out[0] * fx_out + l_out[1], '-', color='LightBlue')
+plt.plot(fx_in, l_in[0] * fx_in + l_in[1], '-', color='LightGreen')
+
+
+plt.legend(('Out-Degree',
+            'In-Degree',
+            'Reciprocated Out-Degree',
+            'Reciprocated In-Degree', 
+            'Unreciprocated Out-Degree',
+            'Unreciprocated In-Degree',
+            'Out-Degree Fit', 
+            'In-Degree Fit'), 
+            loc='best')
+
+plt.savefig(plotname_all)
+
+### plot everything
+plt.figure()
+plt.title("Degree Distributions of the Krapivsky Model")
+plt.xlabel("Log Degree")
+plt.ylabel("Log CCDF")
+
+plt.plot(total_x_out, 
+         total_y_out, 
+         'bx',
+         total_x_in, 
+         total_y_in, 
+         'gx',
+         recip_x_out,
+         recip_y_out,
+         'cx',
+         recip_x_in,
+         recip_y_in,
+         'rx',
+         unrecip_x_out,
+         unrecip_y_out,
+         'kx',
+         unrecip_x_in,
+         unrecip_y_in,
+         'mx')
+plt.legend(('Out-Degree',
+            'In-Degree',
+            'Reciprocated Out-Degree',
+            'Reciprocated In-Degree', 
+            'Unreciprocated Out-Degree',
+            'Unreciprocated In-Degree'),loc="best")
+
+plt.savefig(splitname[0]+'_total'+splitname[1])
