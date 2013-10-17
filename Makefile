@@ -43,7 +43,7 @@ simulation.o: simulation.hh
 
 
 #C
-CSRCDIR=src/c
+CSRCDIR=src/C
 INCLUDE = -Isrc/C -Ilib
 COPTS=-lm -m64
 COBJDIR=build/objects/c
