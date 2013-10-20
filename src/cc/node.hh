@@ -7,10 +7,10 @@
 namespace bignet {
   class Node {
   public:
+    Node();
+    Node(uint64_t id);
     uint64_t id;
     NodePair* adjacency_list = (NodePair*) NULL;
-
-    Node(uint64_t id) {this->id = id;}
 
     virtual void add_edge (Node* to);
   };

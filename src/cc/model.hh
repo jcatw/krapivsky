@@ -9,8 +9,10 @@ namespace bignet {
   public:
     virtual ~Model();
     Model();
-    virtual Network* next(Network* network) =0;
-    virtual int done(Network *network) =0;
+    virtual void next() =0;
+    virtual int done() =0;
+    Network* get_network() {return network; }
+    Network* network;
   };
 }
 

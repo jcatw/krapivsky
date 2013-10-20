@@ -9,10 +9,10 @@ namespace bignet {
 // Provides a default rotation implementation, but not much else.
 class HeapNode {
 public:
-  uint64 priority;
+  uint64_t priority;
 
-  static virtual void rotate_left(HeapNode *& heapnode);
-  static virtual void rotate_right(HeapNode *& heapnode);
+  static void rotate_left(HeapNode *& heapnode);
+  static void rotate_right(HeapNode *& heapnode);
   
   virtual HeapNode *get_left() =0;
   virtual HeapNode *get_right() =0;
@@ -20,7 +20,7 @@ public:
   virtual void *set_left(HeapNode *heapnode) =0;
   virtual void *set_right(HeapNode *heapnode) =0;
   
-}
+};
 
 }
 #endif

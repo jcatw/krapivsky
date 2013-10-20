@@ -10,10 +10,14 @@ namespace bignet {
   class Simulation {
   public:
     Model* model = NULL;
-    Network* network = NULL;
-    Simulation(Model* model) {this->model = model;}
+    Simulation(Model* model);
     virtual ~Simulation();
+    
     virtual int run(int n);
+
+    virtual Network* get_network() {return network;}
+  private:
+    Network* network;
   };
 }
 #endif

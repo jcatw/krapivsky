@@ -11,12 +11,13 @@ namespace bignet {
     Network(int n);
     virtual void add_node(Node *node);
     
-  private:
-    virtual void seed();
-
     int nnodes = 0;
     Node** node_array = NULL;
     int final_size;
+
+  private:
+    virtual void seed();
+
   };
 }
 #endif

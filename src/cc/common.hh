@@ -7,14 +7,23 @@
 
 namespace bignet {
 
-  // declare everything
+  // forward declare everything
+  class Bstreap;
+  class BstreapItem;
+  class DegreeNode;
+  class DirectedDegreeNetwork;
+  class HeapNode;
+  class InDegreeBstreapItem;
+  class KrapivskyModel;
+  class Model;
+  class Network;
   class Node;
   class NodePair;
   class NodeSet;
-  class Model;
+  class OutDegreeBstreapItem;
   class Simulation;
  
 }
 
-double uniform_rand();
+double uniform_random();
 #endif

@@ -2,6 +2,7 @@
 #define BIGNET_NODESET_H
 
 #include "common.hh"
+#include "setitem.hh"
 #include "node.hh"
 
 namespace bignet {
@@ -11,9 +12,10 @@ namespace bignet {
   class NodeSet {
   public:
     virtual ~NodeSet();  // I gather a virtual destructor is needed; c++ is confuse.
-    virtual void insert(SetItem*) =0;  // this is just the craziest way to express anything
-    virtual Node* sample() =0;
-    virtual Node* sample_destructive() =0;
+    //virtual void insert(SetItem*) =0;  // this is just the craziest way to express anything
+    //virtual Node* sample() =0;
+    //virtual Node* sample_destructive() =0;
+    //virtual void remove_item(SetItem* item) =0;
   };
 }
 #endif

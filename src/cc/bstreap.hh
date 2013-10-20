@@ -2,6 +2,7 @@
 #define BIGNET_BSTREAP_H
 
 #include "common.hh"
+#include "bstreapitem.hh"
 #include "nodeset.hh"
 #include "setitem.hh"
 
@@ -15,8 +16,9 @@ namespace bignet {
     //Bstreap(BstreapItem* root) { this->root = root; }
     Bstreap();
     void insert(BstreapItem *item);
-    void sample();
-    void sample_destructive();
+    BstreapItem* sample();
+    BstreapItem* sample_destructive();
+    void remove_item(BstreapItem *item);
   };
 }
 

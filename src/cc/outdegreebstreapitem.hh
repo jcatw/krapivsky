@@ -5,6 +5,9 @@
 #include "bstreapitem.hh"
 
 namespace bignet {
-  OutDegreeBstreapItem(DegreeNode* node, double fitness);
+  class OutDegreeBstreapItem : public BstreapItem {
+  public:
+    OutDegreeBstreapItem(DegreeNode* node, double fitness);
+  };
 }
 #endif /* BIGNET_OUTDEGREEBSTREAPITEM_H */
