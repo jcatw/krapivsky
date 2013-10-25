@@ -2,17 +2,26 @@
 #define BIGNET_DEGREENODE_H
 
 #include "common.hh"
-#include "node.hh"
+#include <list>
+
+using namespace std;
 
 namespace bignet {
-  class DegreeNode: public Node {
+  class DegreeNode {
   public:
-    DegreeNode();
-    DegreeNode(uint64_t id);
-    uint64_t in_degree = 0;
-    uint64_t out_degree = 0;
+    const uint64_t id;
+    //const double fitness;
+    
+    uint64_t in_degree;
+    uint64_t out_degree;
 
-    void add_edge (Node* to);
+    list<DegreeNode*> adjacency_list;
+    
+    DegreeNode(uint64_t id);
+
+    void add_edge (DegreeNode* to);
+    virtual uint64_t get_value() {return in_degree + out_degree;}
+    //float get_fitness() {return fitness;}
   };
 }
-#endif
+#endif /* BIGNET_DEGREENODE_H */

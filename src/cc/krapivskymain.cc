@@ -1,21 +1,20 @@
 #include "common.hh"
+#include "krapivskymodel.hh"
 
+using namespace bignet;
 int main() {
-  uint64_t n = 1000;
   double p = 0.5;
   double lambda = 1.0;
   double mu = 1.0;
-  
-  DirectedDegreeNetwork *network = DirectedDegreeNetwork(n);
+  uint64_t target_n_nodes = 1000000;
 
-  KrapivskyModel *krapivsky = KrapivskyModel(network, p, lambda, mu, n);
-  Simulation *sim = Simulation(krapivsky);
+  KrapivskyModel krapivsky = KrapivskyModel(p, lambda, mu, target_n_nodes);
 
-  cout >> "Commencing simulation.\n";
-  
-  simulation->run(n);
+  while(!krapivsky.done())
+    krapivsky.next();
 
-  cout >> "Simulation complete.\n";
+  std::cout << to_string(krapivsky.network->nnodes) << "\n";
 
   return 0;
 }
+

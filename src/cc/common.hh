@@ -4,26 +4,22 @@
 #include <cstdint>
 #include <cstddef>
 #include <stdlib.h>
+#include <iostream>
+
 
 namespace bignet {
-
   // forward declare everything
-  class Bstreap;
-  class BstreapItem;
+  template<class T> class Bstreap;
+  template<class T> class BstreapItem;
   class DegreeNode;
-  class DirectedDegreeNetwork;
-  class HeapNode;
-  class InDegreeBstreapItem;
+  class InDegreeNode;
   class KrapivskyModel;
-  class Model;
-  class Network;
-  class Node;
-  class NodePair;
-  class NodeSet;
-  class OutDegreeBstreapItem;
-  class Simulation;
- 
+  class OutDegreeNode;
+  template<class T> class Network;
+  extern double uniform_random_double();
+  extern double random_double();
 }
 
-double uniform_random();
-#endif
+
+
+#endif /* BIGNET_COMMON_H */

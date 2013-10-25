@@ -1,17 +1,12 @@
+
 #include "degreenode.hh"
 
 namespace bignet {
-  DegreeNode::DegreeNode() {
-    this->id = 0;
-  }
-  DegreeNode::DegreeNode(uint64_t id) {
-    this->id = id;
-  }
-  void DegreeNode::add_edge(Node* to) {
-    Node::add_edge(to);
-    out_degree++;
-    ((DegreeNode*) to)->in_degree++;
+  DegreeNode::DegreeNode(uint64_t id) : id(id), in_degree(0), out_degree(0), adjacency_list() {};
+  
+  void DegreeNode::add_edge(DegreeNode *to) {
+    this->out_degree++;
+    to->in_degree++;
+    adjacency_list.push_front(to);
   }
 }
-
-

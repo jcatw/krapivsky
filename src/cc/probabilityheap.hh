@@ -1,0 +1,8 @@
+#ifndef BIGNET_PROBABILITYHEAP_H
+#define BIGNET_PROBABILITYHEAP_H
+
+namespace bignet {
+  
+}
+
+#endif /* BIGNET_PROBABILITYHEAP_H */
