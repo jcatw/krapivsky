@@ -74,7 +74,7 @@ namespace bignet {
     }
   }
 
-  template<class T> BstreapNode<T> bool::go_left_comparison(BstreapNode* node) {
+  template<class T> bool BstreapNode<T>::go_left_comparison(BstreapNode* node) {
     return node->node_mass < this->node_mass;
   }
 
